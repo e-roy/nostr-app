@@ -62,7 +62,7 @@ export default function PostPage() {
   return (
     <>
       {event && (
-        <div className={`p-6 rounded border shadow m-6`}>
+        <div className={`p-6 rounded-sm border shadow-sm m-6`}>
           <div className={`flex justify-between`}>
             <UserLink pubkey={event.pubkey} />
 
@@ -86,7 +86,7 @@ export default function PostPage() {
           </div>
           <DisplayTags tags={event.tags} />
           <img
-            className={`w-full rounded my-6 px-12`}
+            className={`w-full rounded-sm my-6 px-12`}
             src={getTagValues("image", event.tags)}
           />
           <div className="w-full self-center max-w-[70rem] my-16">
