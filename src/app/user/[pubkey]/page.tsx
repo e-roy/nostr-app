@@ -1,11 +1,18 @@
 "use client";
 
-import { RelayContext } from "@/context/relay-provider";
+import { useParams } from "next/navigation";
 import { nip19 } from "nostr-tools";
-import { useCallback, useContext, useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { getTagValues, getTimeAndDate } from "@/utils";
 import Link from "next/link";
-import { AddressPointer } from "nostr-tools/lib/nip19";
+import useRelayStore from "@/store/relay-store";
+
+type AddressPointer = {
+  identifier: string;
+  pubkey: string;
+  kind: number;
+  relays: string[];
+};
 
 import { DisplayTags } from "@/components";
 
@@ -14,8 +21,10 @@ import remarkGfm from "remark-gfm";
 
 import { DUMMY_PROFILE_API } from "@/lib/constants";
 
-export default function UserPage({ params }: { params: { pubkey: string } }) {
-  const { activeRelay, relayUrl, subscribe } = useContext(RelayContext);
+export default function UserPage() {
+  const params = useParams<{ pubkey: string }>();
+  const subscribe = useRelayStore((state) => state.subscribe);
+  const relayUrl = useRelayStore((state) => state.relayUrl);
 
   const [showNav, setShowNav] = useState<"20023" | "1">("20023");
 
@@ -116,12 +125,12 @@ export default function UserPage({ params }: { params: { pubkey: string } }) {
   };
 
   useEffect(() => {
-    if (activeRelay) {
+    if (relayUrl) {
       getProfileEvents();
       getUserNoteEvents();
       getArticleEvents();
     }
-  }, [activeRelay, relayUrl]);
+  }, [relayUrl]);
 
   const shortenPubKey = (pubkey: string) => {
     return pubkey.slice(0, 6) + "..." + pubkey.slice(-8);

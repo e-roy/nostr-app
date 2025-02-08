@@ -1,16 +1,19 @@
 "use client";
 
-import { RelayContext } from "@/context/relay-provider";
+import { useParams } from "next/navigation";
 import { nip19 } from "nostr-tools";
-import { useContext, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { getTimeAndDate } from "@/utils";
 import { UserLink } from "@/components";
+import useRelayStore from "@/store/relay-store";
 
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 
-export default function NotesPage({ params }: { params: { id: string } }) {
-  const { activeRelay, relayUrl, subscribe } = useContext(RelayContext);
+export default function NotesPage() {
+  const params = useParams<{ id: string }>();
+  const subscribe = useRelayStore((state) => state.subscribe);
+  const relayUrl = useRelayStore((state) => state.relayUrl);
 
   const [rootThread, setRootThread] = useState<any[]>([]);
   const [thread, setThread] = useState<any[]>([]);
@@ -66,11 +69,11 @@ export default function NotesPage({ params }: { params: { id: string } }) {
   };
 
   useEffect(() => {
-    if (activeRelay) {
+    if (relayUrl) {
       getRootNoteEvents();
       getNoteEvents();
     }
-  }, [activeRelay, relayUrl]);
+  }, [relayUrl]);
 
   return (
     <main className={`p-4`}>

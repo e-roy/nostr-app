@@ -1,28 +1,36 @@
 "use client";
 
-import { RelayContext } from "@/context/relay-provider";
-import { useContext, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
-
 import { Event, nip19 } from "nostr-tools";
-import { AddressPointer } from "nostr-tools/lib/nip19";
+import useRelayStore from "@/store/relay-store";
+
+import type { Filter } from "nostr-tools";
+
+type AddressPointer = {
+  identifier: string;
+  pubkey: string;
+  kind: number;
+  relays: string[];
+};
 
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 
 import { getTagValues, getTimeAndDate } from "@/utils";
-
 import { DisplayTags, UserLink } from "@/components";
 
 export default function Home() {
-  const { subscribe, relayUrl, activeRelay } = useContext(RelayContext);
+  const subscribe = useRelayStore((state) => state.subscribe);
+  const relayUrl = useRelayStore((state) => state.relayUrl);
 
   const [events, setEvents] = useState<Event[]>([]);
 
   const getEvents = () => {
+    console.log("getEvents - relayUrl ===>", relayUrl);
     let newEvents: Event[] = [];
 
-    const filter = {
+    const filter: Filter = {
       kinds: [30023],
       limit: 20,
     };
@@ -35,7 +43,6 @@ export default function Home() {
       if (newEvents.length > 0) {
         setEvents((prev) => [...prev, ...newEvents]);
       }
-
       console.log("onEOSE", newEvents);
     };
 
@@ -43,27 +50,25 @@ export default function Home() {
   };
 
   useEffect(() => {
-    if (activeRelay) getEvents();
-  }, [activeRelay, relayUrl]);
+    console.log("relayUrl ===>", relayUrl);
+    if (relayUrl) getEvents();
+  }, [relayUrl]);
 
   const shortenContent = (content: string) => {
     if (content.length > 120) {
       return content.slice(0, 120) + "...";
     }
-
     return content;
   };
 
   const routeCachedEvent = (pubkey: string, tags: any) => {
     const identifier = getTagValues("d", tags);
-
     const addressPointer: AddressPointer = {
-      identifier: identifier,
-      pubkey: pubkey,
+      identifier,
+      pubkey,
       kind: 30023,
       relays: [relayUrl],
     };
-
     return nip19.naddrEncode(addressPointer);
   };
 

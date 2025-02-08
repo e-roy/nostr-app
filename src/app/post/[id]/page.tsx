@@ -1,23 +1,25 @@
 "use client";
-
-import { RelayContext } from "@/context/relay-provider";
+import { useParams } from "next/navigation";
 import { nip19, Event } from "nostr-tools";
-import { useContext, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { getTagValues, getTimeAndDate } from "@/utils";
+import useRelayStore from "@/store/relay-store";
 
 import { DisplayTags, UserLink } from "@/components";
 
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 
-export default function PostPage({ params }: { params: { id: string } }) {
-  const { activeRelay, relayUrl, subscribe } = useContext(RelayContext);
+export default function PostPage() {
+  const params = useParams<{ id: string }>();
+  const subscribe = useRelayStore((state) => state.subscribe);
+  const relayUrl = useRelayStore((state) => state.relayUrl);
   const [event, setEvent] = useState<Event>();
 
   const naddr: any = nip19.decode(params.id).data;
 
   const getPostEvents = () => {
-    // console.log("naddr", naddr);
+    console.log("naddr   ===>", naddr);
 
     let pubkeysSet = new Set<string>();
 
@@ -52,10 +54,10 @@ export default function PostPage({ params }: { params: { id: string } }) {
   };
 
   useEffect(() => {
-    if (activeRelay) {
+    if (relayUrl) {
       getPostEvents();
     }
-  }, [activeRelay, relayUrl]);
+  }, [relayUrl]);
 
   return (
     <>
