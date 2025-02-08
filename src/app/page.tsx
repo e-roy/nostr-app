@@ -73,7 +73,7 @@ export default function Home() {
   };
 
   return (
-    <main className={`p-4`}>
+    <div className={`p-4`}>
       <div>
         {events.map((event, i) => (
           <div
@@ -132,6 +132,6 @@ export default function Home() {
           </div>
         ))}
       </div>
-    </main>
+    </div>
   );
 }
