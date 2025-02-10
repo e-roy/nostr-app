@@ -125,12 +125,12 @@ export default function UserPage() {
   return (
     <>
       <div
-        className="h-52 sm:h-80"
+        className="h-52 sm:h-80 border"
         style={{
           backgroundImage: userProfile.banner
             ? `url(${userProfile.banner})`
             : "none",
-          backgroundColor: "#94a3b8",
+          // backgroundColor: "#94a3b8",
           backgroundSize: userProfile.banner ? "cover" : "30%",
           backgroundPosition: "center center",
           backgroundRepeat: userProfile.banner ? "no-repeat" : "repeat",
