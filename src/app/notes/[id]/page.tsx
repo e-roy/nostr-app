@@ -1,16 +1,16 @@
 "use client";
 
-import { RelayContext } from "@/context/relay-provider";
+import { useParams } from "next/navigation";
 import { nip19 } from "nostr-tools";
-import { useContext, useEffect, useState } from "react";
-import { getTimeAndDate } from "@/utils";
-import { UserLink } from "@/components";
+import { useEffect, useState } from "react";
+import useRelayStore from "@/store/relay-store";
 
-import ReactMarkdown from "react-markdown";
-import remarkGfm from "remark-gfm";
+import { NoteFeedCard } from "@/components/note/note-feed-card";
 
-export default function NotesPage({ params }: { params: { id: string } }) {
-  const { activeRelay, relayUrl, subscribe } = useContext(RelayContext);
+export default function NotesPage() {
+  const params = useParams<{ id: string }>();
+  const subscribe = useRelayStore((state) => state.subscribe);
+  const relayUrl = useRelayStore((state) => state.relayUrl);
 
   const [rootThread, setRootThread] = useState<any[]>([]);
   const [thread, setThread] = useState<any[]>([]);
@@ -66,31 +66,20 @@ export default function NotesPage({ params }: { params: { id: string } }) {
   };
 
   useEffect(() => {
-    if (activeRelay) {
+    if (relayUrl) {
       getRootNoteEvents();
       getNoteEvents();
     }
-  }, [activeRelay, relayUrl]);
+  }, [relayUrl]);
 
   return (
-    <main className={`p-4`}>
+    <div className={`space-y-8 my-12`}>
       <div>
         {rootThread.map((event) => (
-          <div key={event.id} className={`border p-4`}>
-            <div className={`flex justify-between`}>
-              <UserLink pubkey={event.pubkey} />
-              <span
-                className={`my-auto pl-4 text-sm text-slate-700 font-medium`}
-              >
-                {getTimeAndDate(event.created_at)}
-              </span>
-            </div>
-            <div className={`text-slate-600 my-2`}>
-              <ReactMarkdown remarkPlugins={[remarkGfm]}>
-                {event.content}
-              </ReactMarkdown>
-            </div>
-            <div>
+          <div key={event.id} className={``}>
+            <NoteFeedCard event={event} />
+
+            <div className={`text-muted-foreground px-4`}>
               {event.tags.map((tag: string) => (
                 <div key={tag}>{`${tag[0]} : ${tag[1]}`}</div>
               ))}
@@ -100,21 +89,10 @@ export default function NotesPage({ params }: { params: { id: string } }) {
       </div>
       <div>
         {thread.map((event) => (
-          <div key={event.id} className={`border p-4`}>
-            <div className={`flex justify-between`}>
-              <UserLink pubkey={event.pubkey} />
-              <span
-                className={`my-auto pl-4 text-sm text-slate-700 font-medium`}
-              >
-                {getTimeAndDate(event.created_at)}
-              </span>
-            </div>
-            <div className={`text-slate-600 my-2`}>
-              <ReactMarkdown remarkPlugins={[remarkGfm]}>
-                {event.content}
-              </ReactMarkdown>
-            </div>
-            <div>
+          <div key={event.id} className={``}>
+            <NoteFeedCard event={event} />
+
+            <div className={`text-muted-foreground px-4`}>
               {event.tags.map((tag: string) => (
                 <div key={tag}>{`${tag[0]} : ${tag[1]}`}</div>
               ))}
@@ -122,6 +100,6 @@ export default function NotesPage({ params }: { params: { id: string } }) {
           </div>
         ))}
       </div>
-    </main>
+    </div>
   );
 }

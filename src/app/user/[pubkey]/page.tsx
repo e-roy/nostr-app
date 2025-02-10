@@ -1,27 +1,22 @@
 "use client";
 
-import { RelayContext } from "@/context/relay-provider";
+import { useParams } from "next/navigation";
 import { nip19 } from "nostr-tools";
-import { useCallback, useContext, useEffect, useState } from "react";
-import { getTagValues, getTimeAndDate } from "@/utils";
-import Link from "next/link";
-import { AddressPointer } from "nostr-tools/lib/nip19";
+import { useEffect, useState } from "react";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
-import { DisplayTags } from "@/components";
+import useRelayStore from "@/store/relay-store";
 
-import ReactMarkdown from "react-markdown";
-import remarkGfm from "remark-gfm";
+// import { DUMMY_PROFILE_API } from "@/lib/constants";
+import { PostFeedCard } from "@/components/post/post-feed-card";
+import { User } from "lucide-react";
+import { NoteFeedCard } from "@/components/note/note-feed-card";
 
-import { DUMMY_PROFILE_API } from "@/lib/constants";
-
-export default function UserPage({ params }: { params: { pubkey: string } }) {
-  const { activeRelay, relayUrl, subscribe } = useContext(RelayContext);
-
-  const [showNav, setShowNav] = useState<"20023" | "1">("20023");
-
-  // const [picture, setPicture] = useState<string>(
-  //   DUMMY_PROFILE_API(params.pubkey)
-  // );
+export default function UserPage() {
+  const params = useParams<{ pubkey: string }>();
+  const subscribe = useRelayStore((state) => state.subscribe);
+  const relayUrl = useRelayStore((state) => state.relayUrl);
 
   const [userProfile, setUserProfile] = useState<any>({});
 
@@ -116,51 +111,15 @@ export default function UserPage({ params }: { params: { pubkey: string } }) {
   };
 
   useEffect(() => {
-    if (activeRelay) {
+    if (relayUrl) {
       getProfileEvents();
       getUserNoteEvents();
       getArticleEvents();
     }
-  }, [activeRelay, relayUrl]);
+  }, [relayUrl]);
 
   const shortenPubKey = (pubkey: string) => {
     return pubkey.slice(0, 6) + "..." + pubkey.slice(-8);
-  };
-
-  const handleBlogNav = useCallback(() => {
-    setShowNav("20023");
-  }, []);
-
-  const handleNoteNav = useCallback(() => {
-    setShowNav("1");
-  }, []);
-
-  const routeCachedEvent = (pubkey: string, tags: any) => {
-    // setCachedEvent(event);
-
-    const identifier = getTagValues("d", tags);
-
-    const addressPointer: AddressPointer = {
-      identifier: identifier,
-      pubkey: pubkey,
-      kind: 30023,
-      relays: [relayUrl],
-    };
-
-    // console.log("addressPointer", addressPointer);
-    // console.log("addressPointer", nip19.naddrEncode(addressPointer));
-
-    return nip19.naddrEncode(addressPointer);
-  };
-
-  const routeCachedNote = (pubkey: string) => nip19.noteEncode(pubkey);
-
-  const shortenContent = (content: string) => {
-    if (content.length > 120) {
-      return content.slice(0, 120) + "...";
-    }
-
-    return content;
   };
 
   return (
@@ -178,113 +137,46 @@ export default function UserPage({ params }: { params: { pubkey: string } }) {
         }}
       />
       <div className={`-mt-16 px-20 flex`}>
-        <img
-          src={userProfile.picture}
-          alt="profile picture"
-          className={`rounded-full w-32 h-32 bg-white`}
-        />
-        <div className={`flex flex-col`}>
+        <Avatar className={`rounded-full w-32 h-32`}>
+          <AvatarImage
+            src={userProfile.picture}
+            alt={userProfile.name || "User"}
+          />
+          <AvatarFallback>
+            <User />
+          </AvatarFallback>
+        </Avatar>
+        <div className={`flex flex-col space-y-2`}>
           <span
             className={`mt-12 ml-8 px-4 py-1.5 rounded-full bg-white font-medium text-slate-800 text-xl border`}
           >
             {userProfile.name} - {userProfile.nip05}
           </span>
-          <span className={`ml-12 text-slate-700`}>
-            {shortenPubKey(params.pubkey)}
-          </span>
+          <span className={`ml-12`}>{shortenPubKey(params.pubkey)}</span>
         </div>
       </div>
 
-      <div className={`my-8 px-4`}>
-        <div className={`flex justify-center my-4`}>
-          <span className="isolate inline-flex rounded-md shadow-md">
-            <button
-              type="button"
-              className="relative inline-flex items-center rounded-l-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-10"
-              onClick={handleBlogNav}
-            >
-              {`Blog [20023]`}
-            </button>
-
-            <button
-              type="button"
-              className="relative -ml-px inline-flex items-center rounded-r-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-10"
-              onClick={handleNoteNav}
-            >
-              {`Notes [1]`}
-            </button>
-          </span>
-        </div>
-
-        {showNav === "20023" &&
-          userArticles.map((article) => {
-            return (
-              <div
-                key={article.id}
-                className={`border shadow-md p-4 rounded-lg my-4`}
-              >
-                <div className={`flex justify-between`}>
-                  <Link
-                    href={`/post/${routeCachedEvent(
-                      article.pubkey,
-                      article.tags
-                    )}`}
-                    prefetch={false}
-                  >
-                    <h3
-                      className={`text-slate-900 text-xl font-semibold hover:text-primary-600`}
-                    >
-                      {getTagValues("title", article.tags) || "Untitled"}
-                    </h3>
-                  </Link>
-
-                  <div className={`text-slate-500 text-xs`}>
-                    {getTimeAndDate(article.created_at)}
-                  </div>
-                </div>
-                <div className={`text-slate-600`}>
-                  {getTagValues("summary", article.tags) || (
-                    <ReactMarkdown remarkPlugins={[remarkGfm]}>
-                      {shortenContent(article.content)}
-                    </ReactMarkdown>
-                  )}
-                </div>
-                <div className={`my-2`}>
-                  <DisplayTags tags={article.tags} />
-                </div>
-
-                <div className={`text-xs text-slate-500`}>
-                  {getTagValues("client", article.tags) || "no client"}
-                </div>
+      <div className={`my-8`}>
+        <Tabs defaultValue="blog">
+          <TabsList className="grid w-full grid-cols-2">
+            <TabsTrigger value="blog"> {`Blog [20023]`}</TabsTrigger>
+            <TabsTrigger value="notes"> {`Notes [1]`}</TabsTrigger>
+          </TabsList>
+          <TabsContent value="blog">
+            {userArticles.map((article) => (
+              <div key={article.id} className={`my-4`}>
+                <PostFeedCard event={article} />
               </div>
-            );
-          })}
-        {showNav === "1" &&
-          userNotes.map((note) => {
-            return (
-              <div
-                key={note.id + note.pubkey}
-                className={`border shadow-md p-4 rounded-lg my-4`}
-              >
-                <div className={`flex justify-between`}>
-                  <Link
-                    href={`/notes/${routeCachedNote(note.id)}`}
-                    prefetch={false}
-                  >
-                    <div
-                      className={`text-lg font-medium text-slate-700 hover:text-primary-600`}
-                    >
-                      {note.content}
-                    </div>
-                  </Link>
-
-                  <div className={`text-slate-500 text-xs`}>
-                    {getTimeAndDate(note.created_at)}
-                  </div>
-                </div>
+            ))}
+          </TabsContent>
+          <TabsContent value="notes">
+            {userNotes.map((note) => (
+              <div key={note.id + note.pubkey} className={`my-4`}>
+                <NoteFeedCard event={note} />
               </div>
-            );
-          })}
+            ))}
+          </TabsContent>
+        </Tabs>
       </div>
     </>
   );

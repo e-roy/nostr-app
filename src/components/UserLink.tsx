@@ -1,11 +1,12 @@
-import { RelayContext } from "@/context/relay-provider";
 import { nip19, Event } from "nostr-tools";
-import { useContext, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
+import useRelayStore from "@/store/relay-store";
 
 import Link from "next/link";
 
 export const UserLink = ({ pubkey }: { pubkey: string }) => {
-  const { relayUrl, subscribe } = useContext(RelayContext);
+  const subscribe = useRelayStore((state) => state.subscribe);
+  const relayUrl = useRelayStore((state) => state.relayUrl);
   const [userProfile, setUserProfile] = useState<any>({});
 
   const getProfileEvent = () => {
@@ -34,7 +35,9 @@ export const UserLink = ({ pubkey }: { pubkey: string }) => {
   return (
     <Link href={`/user/${nip19.npubEncode(pubkey)}`}>
       <div className={`flex hover:text-primary-500 text-slate-700`}>
-        <img className={`w-12 h-12 rounded-full`} src={userProfile.picture} />
+        {userProfile.picture && (
+          <img className={`w-12 h-12 rounded-full`} src={userProfile.picture} />
+        )}
         <div className={`flex flex-col ml-4  font-medium`}>
           <span>{userProfile.name}</span>
           <span>{userProfile.nip05}</span>
