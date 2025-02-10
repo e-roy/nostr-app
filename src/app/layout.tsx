@@ -27,14 +27,12 @@ export default function RootLayout({
           <div className="min-h-screen bg-[#ededed] dark:bg-[#171717] text-[#171717] dark:text-[#ededed]">
             <div className="container mx-auto flex gap-4">
               {/* Left Sidebar */}
-              <aside className="w-64 fixed left-0 top-0 h-screen p-4 hidden md:block">
+              <aside className="w-64 fixed left-0 top-0 h-screen p-4 hidden md:block bg-card text-card-foreground">
                 <MainNav />
               </aside>
 
               {/* Main Content */}
-              <main className="flex-1 min-h-screen border-x md:ml-64">
-                {children}
-              </main>
+              <main className="flex-1 min-h-screen md:ml-64">{children}</main>
             </div>
           </div>
         </ThemeProvider>
