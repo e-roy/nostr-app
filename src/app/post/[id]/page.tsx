@@ -51,5 +51,5 @@ export default function PostPage() {
     }
   }, [relayUrl]);
 
-  return <>{event && <Post event={event} />}</>;
+  return <div className={`my-12`}>{event && <Post event={event} />}</div>;
 }

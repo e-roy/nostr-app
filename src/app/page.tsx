@@ -38,11 +38,9 @@ export default function Home() {
   }, [relayUrl]);
 
   return (
-    <div className={`p-4`}>
-      {events.map((event, i) => (
-        <div key={event.id} className={`my-4`}>
-          <PostFeedCard event={event} />
-        </div>
+    <div className={`space-y-4 my-12`}>
+      {events.map((event) => (
+        <PostFeedCard key={event.id} event={event} />
       ))}
     </div>
   );
