@@ -6,7 +6,7 @@ import { MainNav } from "@/components/main-nav";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata = {
-  title: "Nostr App",
+  title: "Nostr Client App",
   description: "Basic Nostr Client App",
 };
 

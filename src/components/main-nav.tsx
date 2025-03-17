@@ -32,7 +32,7 @@ export function MainNav() {
     <nav className="flex flex-col gap-2">
       <Link href="/" className="flex items-center gap-2 px-4 py-2">
         <Zap className="w-8 h-8 text-primary" />
-        <span className="text-xl font-bold">Nostr</span>
+        <span className="text-xl font-bold">Nostr Client</span>
       </Link>
       {navItems.map((item) => {
         const Icon = item.icon;

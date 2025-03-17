@@ -8,8 +8,7 @@ import { Post } from "@/components/post/post";
 
 export default function PostPage() {
   const params = useParams<{ id: string }>();
-  const subscribe = useRelayStore((state) => state.subscribe);
-  const relayUrl = useRelayStore((state) => state.relayUrl);
+  const { subscribe, relayUrl, initialized } = useRelayStore();
   const [event, setEvent] = useState<Event | undefined>(undefined);
 
   const naddr: any = nip19.decode(params.id).data;

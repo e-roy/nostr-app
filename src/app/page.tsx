@@ -6,8 +6,7 @@ import useRelayStore from "@/store/relay-store";
 import { PostFeedCard } from "@/components/post/post-feed-card";
 
 export default function Home() {
-  const subscribe = useRelayStore((state) => state.subscribe);
-  const relayUrl = useRelayStore((state) => state.relayUrl);
+  const { subscribe, relayUrl, initialized } = useRelayStore();
 
   const [events, setEvents] = useState<Event[]>([]);
 
