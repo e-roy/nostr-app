@@ -1,5 +1,5 @@
 export const RELAYS = [
-  "wss://relay.damus.io",
+  // "wss://relay.damus.io",
   "wss://nostr-pub.wellorder.net",
   "wss://nos.lol/",
   "wss://relay.snort.social",
@@ -13,43 +13,9 @@ export const RELAYS = [
   // "wss://relay.nostr.info",
 ];
 
-export const PRESET_AMOUNTS = [
-  { value: "1000", label: "1k" },
-  { value: "5000", label: "5k" },
-  { value: "10000", label: "10k" },
-  { value: "25000", label: "25k" },
-];
+// Note to self of inspired site
+// export const HOST = "https://blogstack.io";
 
-export const HOST = "https://blogstack.io";
-
-export const DUMMY_PROFILE_API = (seed: string) => {
-  const style:
-    | "adventurer"
-    | "adventurer-neutral"
-    | "avataaars"
-    | "avataaars-neutral"
-    | "big-ears"
-    | "big-ears-neutral"
-    | "big-smile"
-    | "bottts"
-    | "bottts-neutral"
-    | "croodles"
-    | "croodles-neutral"
-    | "fun-emoji"
-    | "icons"
-    | "identicon"
-    | "initials"
-    | "lorelei"
-    | "lorelei-neutral"
-    | "micah"
-    | "miniavs"
-    | "open-peeps"
-    | "personas"
-    | "pixel-art"
-    | "pixel-art-neutral" = "identicon";
-  return `https://api.dicebear.com/5.x/${style}/svg?seed=${seed}`;
-};
-
-export const VALIDATION = {
-  required: "Required",
-};
+// export const VALIDATION = {
+//   required: "Required",
+// };
