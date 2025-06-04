@@ -4,24 +4,10 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
-import {
-  Home,
-  Hash,
-  Bell,
-  Mail,
-  Bookmark,
-  User,
-  Settings,
-  Zap,
-} from "lucide-react";
+import { Home, Settings, Zap } from "lucide-react";
 
 const navItems = [
   { name: "Home", href: "/", icon: Home },
-  //   { name: "Explore", href: "/explore", icon: Hash },
-  //   { name: "Notifications", href: "/notifications", icon: Bell },
-  //   { name: "Messages", href: "/messages", icon: Mail },
-  //   { name: "Bookmarks", href: "/bookmarks", icon: Bookmark },
-  //   { name: "Profile", href: "/profile", icon: User },
   { name: "Settings", href: "/settings", icon: Settings },
 ];
 

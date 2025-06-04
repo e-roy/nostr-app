@@ -9,6 +9,7 @@ import useRelayStore from "@/store/relay-store";
 import { PostFeedCard } from "@/components/post/post-feed-card";
 import { User } from "lucide-react";
 import { NoteFeedCard } from "@/components/note/note-feed-card";
+import { PostSkeletons } from "@/components/post-skeletons";
 
 export default function UserPage() {
   const params = useParams<{ pubkey: string }>();
@@ -17,7 +18,6 @@ export default function UserPage() {
   const [userProfile, setUserProfile] = useState<any>({});
   const [userArticles, setUserArticles] = useState<any[]>([]);
   const [userNotes, setUserNotes] = useState<any[]>([]);
-  const [events, setEvents] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
   const profilePubkey = nip19.decode(params.pubkey).data.toString();
@@ -65,11 +65,10 @@ export default function UserPage() {
 
     const onEOSE = () => {
       if (newEvents.length !== 0) {
-        setEvents((prev) => [...prev, ...newEvents]);
+        setUserNotes((prev) => [...prev, ...newEvents]);
       }
 
       console.log("getUserNoteEvents events 1", newEvents);
-      setUserNotes(newEvents);
       setLoading(false);
     };
 
@@ -91,11 +90,10 @@ export default function UserPage() {
 
     const onEOSE = () => {
       if (newEvents.length !== 0) {
-        setEvents((prev) => [...prev, ...newEvents]);
+        setUserArticles((prev) => [...prev, ...newEvents]);
       }
 
       console.log("onEOSE events 30023", newEvents);
-      setUserArticles(newEvents);
       setLoading(false);
     };
 
@@ -116,24 +114,10 @@ export default function UserPage() {
     return pubkey.slice(0, 6) + "..." + pubkey.slice(-8);
   };
 
-  const PostSkeletons = () => {
-    return (
-      <div className="grid grid-cols-1 gap-4">
-        {[...Array(3)].map((_, i) => (
-          <div key={i} className="p-4 bg-white rounded-lg shadow">
-            <div className="animate-pulse h-4 bg-gray-200 w-1/4 mb-2"></div>
-            <div className="animate-pulse h-4 bg-gray-200 w-1/2 mb-2"></div>
-            <div className="animate-pulse h-4 bg-gray-200 w-1/4"></div>
-          </div>
-        ))}
-      </div>
-    );
-  };
-
   return (
     <>
       <div
-        className="h-52 sm:h-80 border"
+        className="h-52 sm:h-80 bg-card"
         style={{
           backgroundImage: userProfile.banner
             ? `url(${userProfile.banner})`
@@ -150,7 +134,7 @@ export default function UserPage() {
             alt={userProfile.name || "User"}
           />
           <AvatarFallback>
-            <User />
+            <User className="h-24 w-24" />
           </AvatarFallback>
         </Avatar>
         <div className={`flex flex-col space-y-2`}>

@@ -9,7 +9,7 @@ import { NoteFeedCard } from "@/components/note/note-feed-card";
 
 export default function NotesPage() {
   const params = useParams<{ id: string }>();
-  const { subscribe, relayUrl, initialized } = useRelayStore();
+  const { subscribe, relayUrl } = useRelayStore();
 
   const [rootThread, setRootThread] = useState<any[]>([]);
   const [thread, setThread] = useState<any[]>([]);

@@ -3,8 +3,13 @@
 import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
 import { RELAYS } from "@/lib/constants";
-import { Relay } from "nostr-tools";
-import type { Event, Filter, Relay as RelayType } from "nostr-tools";
+
+import {
+  Relay,
+  type Event,
+  type Filter,
+  type Relay as RelayType,
+} from "nostr-tools";
 import { Subscription } from "nostr-tools/lib/types/relay";
 
 // Define relay status type

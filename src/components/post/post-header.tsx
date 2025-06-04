@@ -1,7 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
-import { type Event } from "nostr-tools";
-import { nip19 } from "nostr-tools";
+import { type Event, nip19 } from "nostr-tools";
 import useRelayStore from "@/store/relay-store";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";

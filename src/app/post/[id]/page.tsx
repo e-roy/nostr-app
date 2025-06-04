@@ -8,14 +8,12 @@ import { Post } from "@/components/post/post";
 
 export default function PostPage() {
   const params = useParams<{ id: string }>();
-  const { subscribe, relayUrl, initialized } = useRelayStore();
+  const { subscribe, relayUrl } = useRelayStore();
   const [event, setEvent] = useState<Event | undefined>(undefined);
 
   const naddr: any = nip19.decode(params.id).data;
 
   const getPostEvents = () => {
-    // console.log("naddr   ===>", naddr);
-
     let pubkeysSet = new Set<string>();
 
     setEvent(undefined);

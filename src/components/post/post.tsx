@@ -1,18 +1,18 @@
 import { type Event } from "nostr-tools";
-import { Card } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { PostHeader } from "./post-header";
 import { PostContent } from "./post-content";
 import { getTagValues } from "@/utils";
 import { DisplayTags } from "../DisplayTags";
 
 interface PostProps {
-  event: Event;
+  readonly event: Event;
 }
 
 export function Post({ event }: PostProps) {
   return (
-    <Card className="p-8 rounded-none transition-colors">
-      <div className="space-y-8">
+    <Card>
+      <CardContent className="space-y-8">
         <PostHeader
           event={event}
           pubkey={event.pubkey}
@@ -36,7 +36,7 @@ export function Post({ event }: PostProps) {
         </div>
 
         <PostContent content={event.content} />
-      </div>
+      </CardContent>
     </Card>
   );
 }

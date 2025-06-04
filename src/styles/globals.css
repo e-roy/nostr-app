@@ -245,3 +245,11 @@
   overflow-wrap: break-word;
   hyphens: auto;
 }
+
+@layer base {
+
+  button:not(:disabled),
+  [role="button"]:not(:disabled) {
+    cursor: pointer;
+  }
+}
