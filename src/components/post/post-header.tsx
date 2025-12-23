@@ -2,6 +2,7 @@
 import { useEffect, useState } from "react";
 import { type Event, nip19 } from "nostr-tools";
 import useRelayStore from "@/store/relay-store";
+import useProfileStore from "@/store/profile-store";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { formatDistanceToNow } from "date-fns";
@@ -24,11 +25,27 @@ interface UserProfile {
 export function PostHeader({ event, pubkey, timestamp }: PostHeaderProps) {
   const subscribe = useRelayStore((state) => state.subscribe);
   const relayUrl = useRelayStore((state) => state.relayUrl);
+  const { getProfile, setProfile, isPending, setPending } = useProfileStore();
   const [userProfile, setUserProfile] = useState<UserProfile>({
     npub: "",
   });
 
-  const getProfileEvent = () => {
+  useEffect(() => {
+    if (!pubkey) return;
+
+    // Check cache first
+    const cached = getProfile(pubkey);
+    if (cached) {
+      setUserProfile(cached);
+      return;
+    }
+
+    // Already fetching this profile
+    if (isPending(pubkey)) return;
+
+    // Mark as pending and fetch
+    setPending(pubkey, true);
+
     const newEvents: Event[] = [];
 
     const filter = {
@@ -41,17 +58,20 @@ export function PostHeader({ event, pubkey, timestamp }: PostHeaderProps) {
     };
 
     const onEOSE = () => {
+      setPending(pubkey, false);
       if (newEvents.length > 0) {
-        setUserProfile(JSON.parse(newEvents[0].content));
+        try {
+          const profile = JSON.parse(newEvents[0].content);
+          setProfile(pubkey, profile);
+          setUserProfile(profile);
+        } catch {
+          // Invalid JSON in profile, ignore
+        }
       }
     };
 
     subscribe([relayUrl], filter, onEvent, onEOSE);
-  };
-
-  useEffect(() => {
-    if (pubkey) getProfileEvent();
-  }, [pubkey, relayUrl, subscribe]);
+  }, [pubkey, relayUrl, subscribe, getProfile, setProfile, isPending, setPending]);
 
   const timeAgo = formatDistanceToNow(timestamp, { addSuffix: true });
 

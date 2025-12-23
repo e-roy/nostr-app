@@ -4,12 +4,14 @@ import { useEffect, useRef, useState, useCallback } from "react";
 import type { Filter, Event } from "nostr-tools";
 import useRelayStore from "@/store/relay-store";
 import { PostFeedCard } from "@/components/post/post-feed-card";
+import { PostSkeletons } from "@/components/post-skeletons";
 import { LoaderCircle } from "lucide-react";
 
 export default function Home() {
   const { subscribe, relayUrl } = useRelayStore();
   const [events, setEvents] = useState<Event[]>([]);
   const [loading, setLoading] = useState(false);
+  const [initialLoading, setInitialLoading] = useState(true);
   const loadMoreRef = useRef<HTMLDivElement>(null);
 
   // Helper function to deduplicate and sort events by created_at descending
@@ -44,6 +46,7 @@ export default function Home() {
         }
         // Always set loading to false once the fetch cycle is completed
         setLoading(false);
+        setInitialLoading(false);
       };
 
       subscribe([relayUrl], filter, onEvent, onEOSE);
@@ -95,9 +98,13 @@ export default function Home() {
 
   return (
     <div className="space-y-4 my-12">
-      {events.map((event) => (
-        <PostFeedCard key={event.id} event={event} />
-      ))}
+      {initialLoading ? (
+        <PostSkeletons />
+      ) : (
+        events.map((event) => (
+          <PostFeedCard key={event.id} event={event} />
+        ))
+      )}
       <div ref={loadMoreRef} className="h-1" />
       {loading && (
         <div className="text-center py-2 flex justify-center items-center">

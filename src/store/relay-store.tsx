@@ -207,7 +207,7 @@ const useRelayStore = create<RelayStore>()(
           const relay = await connectWithTimeout();
 
           // Subscribe to events; update active and connected relays appropriately
-          relay.subscribe([], {
+          relay.subscribe([{ kinds: [0], limit: 1 }], {
             onevent: () => {
               if (newRelayUrl === relay.url) {
                 setActiveRelay(relay);

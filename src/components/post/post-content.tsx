@@ -3,6 +3,7 @@
 import { useMemo, FC } from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
+import { ImageWithFallback } from "@/components/ui/image-with-fallback";
 
 interface PostContentProps {
   readonly content: string;
@@ -117,9 +118,9 @@ export const PostContent: FC<PostContentProps> = ({ content }) => {
         const { src, alt } = props;
         if (!src) return null;
         return (
-          <img
+          <ImageWithFallback
             src={src}
-            alt={alt}
+            alt={alt || "Image"}
             className="rounded-lg max-h-96 object-cover my-2"
           />
         );

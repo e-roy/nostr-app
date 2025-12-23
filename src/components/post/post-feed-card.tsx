@@ -3,6 +3,7 @@
 import { type Event, nip19 } from "nostr-tools";
 
 import { Card, CardContent } from "@/components/ui/card";
+import { ImageWithFallback } from "@/components/ui/image-with-fallback";
 import { PostHeader } from "./post-header";
 import { PostContent } from "./post-content";
 import { getTagValues } from "@/utils";
@@ -67,8 +68,9 @@ export function PostFeedCard({ event }: PostFeedCardProps) {
             </div>
             {imageUrl && (
               <div className="flex-shrink-0">
-                <img
+                <ImageWithFallback
                   src={imageUrl}
+                  alt={title}
                   className="w-32 h-32 object-cover rounded-md"
                 />
               </div>

@@ -1,5 +1,6 @@
 import { type Event } from "nostr-tools";
 import { Card, CardContent } from "@/components/ui/card";
+import { ImageWithFallback } from "@/components/ui/image-with-fallback";
 import { PostHeader } from "./post-header";
 import { PostContent } from "./post-content";
 import { getTagValues } from "@/utils";
@@ -26,11 +27,12 @@ export function Post({ event }: PostProps) {
         <div className={`px-12`}>
           <DisplayTags tags={event.tags} />
         </div>
-        <div>
+        <div className="px-12">
           {getTagValues("image", event.tags) && (
-            <img
-              className={`w-full rounded-sm my-6 px-12`}
+            <ImageWithFallback
+              className="w-full rounded-sm my-6"
               src={getTagValues("image", event.tags)}
+              alt={getTagValues("title", event.tags) || "Post image"}
             />
           )}
         </div>
